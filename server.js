@@ -5,8 +5,21 @@ const port = 3000
 const { db } = require('./firebase.js')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const cors = require('cors')
 
 app.use(express.json())
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:your_port'); // Reemplaza con tu puerto
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
+app.use(cors({
+    origin: '*', // Reemplaza con tu puerto
+    //methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: false // Habilita el uso de cookies y credenciales de autenticación
+}));
+
 
 app.get('/usuarios', async (req, res) => {
     try {
@@ -41,18 +54,18 @@ app.post('/addfriend', async (req, res) => {
 app.post('/register', async (req, res) => {
     try {
         const userData = req.body;
-        
+
         // Perform validation on userData, e.g., check for required fields
-        
+
         // Hash the password before storing it in the database
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
-        
+
         // Replace the plain password with the hashed password in the userData
         userData.password = hashedPassword;
-        
+
         // You can also perform any additional processing or data transformation
-        
+
         const newUserRef = await db.collection("usuarios").add(userData);
         res.status(201).send({ id: newUserRef.id });
     } catch (error) {
@@ -65,32 +78,64 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        
+        //console.log("lemus")
         // Retrieve user from the database based on the provided username
         const userSnapshot = await db.collection("usuarios").where("username", "==", username).get();
-        
+
         if (userSnapshot.empty) {
             return res.status(401).send("Invalid username or password");
         }
-        
+
         const userDoc = userSnapshot.docs[0];
         const userData = userDoc.data();
-        
+
         // Compare the provided password with the stored hashed password
         const passwordMatch = await bcrypt.compare(password, userData.password);
-        
+
         if (!passwordMatch) {
             return res.status(401).send("Invalid username or password");
         }
-        
+
         // If username and password are correct, generate a JWT token
-        const token = jwt.sign({ userId: userDoc.id }, 'your-secret-key', { expiresIn: '1h' });
-        
-        res.status(200).json({ token });
+        const token = jwt.sign({ userId: userDoc.id }, 'lemus', { expiresIn: '1h' });
+
+        res.status(200).json({ "token": token, "success": true });
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error");
     }
 });
+
+app.get('/profile', async (req, res) => {
+    
+    try {
+        const token = req.header('Authorization');
+        console.log("lemus", token)
+
+        if (!token) {
+            return res.status(401).send("No token provided");
+        }
+
+        jwt.verify(token, 'lemus', async (error, decoded) => {
+            if (error) {
+                return res.status(401).send("Invalid token");
+            }
+
+            const userId = decoded.userId;
+            const userSnapshot = await db.collection("usuarios").doc(userId).get();
+
+            if (!userSnapshot.exists) {
+                return res.status(404).send("User not found");
+            }
+
+            const userData = userSnapshot.data();
+            res.status(200).json(userData);
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 
 app.listen(port, () => console.log(`Server has started on port: ${port}`))
