@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(interests => {
 
                 //debugger
-                const interestsList = interests.map(interest => `<li>${interest.nombre}</li>`).join('');
+                const interestsList = interests.map(interest => `<option>${interest.nombre}</option>`).join('');
                 InterestsList.innerHTML = interestsList;
             })
             .catch(error => {
