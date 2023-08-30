@@ -21,6 +21,20 @@ app.use(cors({
 }));
 
 
+app.get('/intereses', async (req, res) => {
+    try {
+        const querySnapshot = await db.collection("intereses").get();
+        const contacts = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        res.status(200).send(contacts)
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+
 app.get('/usuarios', async (req, res) => {
     try {
         const querySnapshot = await db.collection("usuarios").get();
@@ -42,6 +56,45 @@ app.get('/usuarios/:id', async (req, res) => {
         console.error(error);
     }
 })
+
+app.post('/actualizar-ususario', async (req, res) => {
+    try {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ6MVlyU1A0MFg2amxIY1lXbVl6QSIsImlhdCI6MTY5MzQzNTY5NSwiZXhwIjoxNjkzNDM5Mjk1fQ.w6rPIcooIra3fqHpwj3j6kQBBju9qxQlhJ2RE5AiMbg"
+        console.log(token)
+        if (!token) {
+            return res.status(401).send("No token provided");
+        }
+
+        jwt.verify(token, 'lemus', async (error, decoded) => {
+            if (error) {
+                return res.status(401).send("Invalid token");
+            }
+
+            const userId = decoded.userId;
+
+           
+
+            const userSnapshot = await db.collection("usuarios").doc(userId).get();
+
+            if (!userSnapshot.exists) {
+                return res.status(404).send("User not found");
+            }
+
+            const userData = userSnapshot.data();
+
+            // Update user data based on the request body
+            // For example, you can update specific fields like this:
+            const updatedUserData = req.body;
+            await db.collection("usuarios").doc(userId).set(updatedUserData, { merge: true });
+
+
+            res.status(200).json(userData);
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 app.post('/addfriend', async (req, res) => {
     const data = req.body
@@ -101,7 +154,6 @@ app.post('/login', async (req, res) => {
 
         res.status(200).json({ "token": token, "success": true });
     } catch (error) {
-        console.error(error);
         res.status(500).send("Internal Server Error");
     }
 });
@@ -110,7 +162,7 @@ app.get('/profile', async (req, res) => {
     
     try {
         const token = req.header('Authorization');
-        console.log("lemus", token)
+
 
         if (!token) {
             return res.status(401).send("No token provided");
