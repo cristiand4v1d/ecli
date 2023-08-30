@@ -3,15 +3,10 @@ const { FieldValue } = require('firebase-admin/firestore')
 const app = express()
 const port = 3000
 const { db } = require('./firebase.js')
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 app.use(express.json())
-
-const friends = {
-    'james': 'friend',
-    'larry': 'friend',
-    'lucy': 'friend',
-    'banana': 'enemy',
-}
 
 app.get('/usuarios', async (req, res) => {
     try {
@@ -29,7 +24,7 @@ app.get('/usuarios', async (req, res) => {
 app.get('/usuarios/:id', async (req, res) => {
     try {
         const querySnapshot = await db.collection("usuarios").doc(req.params.id).get();
-        res.status(200).send(querySnapshot)
+        res.status(200).send(querySnapshot.data())
     } catch (error) {
         console.error(error);
     }
@@ -40,31 +35,62 @@ app.post('/addfriend', async (req, res) => {
     await db.collection("usuarios").add({
         data
     })
-    /* const peopleRef = db.collection('usuarios').doc('associates')
-    const res2 = await peopleRef.set({
-        [name]: status
-    }, { merge: true }) */
-    // friends[name] = status
     res.status(200).send(data)
 })
 
-app.patch('/changestatus', async (req, res) => {
-    const { name, newStatus } = req.body
-    const peopleRef = db.collection('people').doc('associates')
-    const res2 = await peopleRef.set({
-        [name]: newStatus
-    }, { merge: true })
-    // friends[name] = newStatus
-    res.status(200).send(friends)
-})
+app.post('/register', async (req, res) => {
+    try {
+        const userData = req.body;
+        
+        // Perform validation on userData, e.g., check for required fields
+        
+        // Hash the password before storing it in the database
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+        
+        // Replace the plain password with the hashed password in the userData
+        userData.password = hashedPassword;
+        
+        // You can also perform any additional processing or data transformation
+        
+        const newUserRef = await db.collection("usuarios").add(userData);
+        res.status(201).send({ id: newUserRef.id });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
-app.delete('/friends', async (req, res) => {
-    const { name } = req.body
-    const peopleRef = db.collection('people').doc('associates')
-    const res2 = await peopleRef.update({
-        [name]: FieldValue.delete()
-    })
-    res.status(200).send(friends)
-})
+
+app.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        
+        // Retrieve user from the database based on the provided username
+        const userSnapshot = await db.collection("usuarios").where("username", "==", username).get();
+        
+        if (userSnapshot.empty) {
+            return res.status(401).send("Invalid username or password");
+        }
+        
+        const userDoc = userSnapshot.docs[0];
+        const userData = userDoc.data();
+        
+        // Compare the provided password with the stored hashed password
+        const passwordMatch = await bcrypt.compare(password, userData.password);
+        
+        if (!passwordMatch) {
+            return res.status(401).send("Invalid username or password");
+        }
+        
+        // If username and password are correct, generate a JWT token
+        const token = jwt.sign({ userId: userDoc.id }, 'your-secret-key', { expiresIn: '1h' });
+        
+        res.status(200).json({ token });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 app.listen(port, () => console.log(`Server has started on port: ${port}`))
