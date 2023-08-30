@@ -1,72 +1,70 @@
-const fs = require('node:fs');
-const http = require('node:http');
-const url = require('node:url');
+const express = require('express')
+const { FieldValue } = require('firebase-admin/firestore')
+const app = express()
+const port = 3000
+const { db } = require('./firebase.js')
 
-// set up web server
-const server = http.createServer(listener);
+app.use(express.json())
 
-// last known count
-let count = 0;
-
-// Map of file extensions to mime types
-const mimeTypes = {
-  "ico": "image/x-icon",
-  "js": "text/javascript",
-  "css": "text/css",
-  "svg": "image/svg+xml"
-};
-
-// Process requests based on pathname
-async function listener(request, response) {
-  const { pathname } = url.parse(request.url);
-  
-  if (pathname === '/') {
-    await main(request, response)
-  } else if (fs.existsSync(`public${pathname}`)) {
-    try {
-      let contents = fs.readFileSync(`public${pathname}`)
-      let mimeType = mimeTypes[pathname.split('.').pop()] || 'application/octet-stream'
-      
-      response.writeHead(200, { "Content-Type": mimeType });
-      response.write(contents, "binary");
-    } catch (error) {
-      response.writeHead(500, {"Content-Type": "text/plain"});
-      response.write(error + "\n");
-    }
-    response.end();
-  } else {
-    response.writeHead(400);
-    response.end("Not found.");
-  }
+const friends = {
+    'james': 'friend',
+    'larry': 'friend',
+    'lucy': 'friend',
+    'banana': 'enemy',
 }
 
-// Main page
-async function main(_request, response) {
-  // increment counter in counter.txt file
-  try {
-    count = parseInt(fs.readFileSync('counter.txt', 'utf-8')) + 1;
-  } catch {
-    count = 1;
-  }
+app.get('/usuarios', async (req, res) => {
+    try {
+        const querySnapshot = await db.collection("usuarios").get();
+        const contacts = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        res.status(200).send(contacts)
+    } catch (error) {
+        console.error(error);
+    }
+})
 
-  fs.writeFileSync('counter.txt', count.toString());
+app.get('/usuarios/:id', async (req, res) => {
+    try {
+        const querySnapshot = await db.collection("usuarios").doc(req.params.id).get();
+        res.status(200).send(querySnapshot)
+    } catch (error) {
+        console.error(error);
+    }
+})
 
-  // render HTML response
-  try {
-    let contents = fs.readFileSync(`views/index.tmpl`, 'utf-8');
-    contents = contents.replace('@@COUNT@@', count.toString());
+app.post('/addfriend', async (req, res) => {
+    const data = req.body
+    await db.collection("usuarios").add({
+        data
+    })
+    /* const peopleRef = db.collection('usuarios').doc('associates')
+    const res2 = await peopleRef.set({
+        [name]: status
+    }, { merge: true }) */
+    // friends[name] = status
+    res.status(200).send(data)
+})
 
-    response.writeHead(200, { "Content-Type": "text/html" });
-    response.write(contents, "utf-8");
-  } catch (error) {
-    response.writeHead(500, {"Content-Type": "text/plain"});
-    response.write(error + "\n");
-  }
+app.patch('/changestatus', async (req, res) => {
+    const { name, newStatus } = req.body
+    const peopleRef = db.collection('people').doc('associates')
+    const res2 = await peopleRef.set({
+        [name]: newStatus
+    }, { merge: true })
+    // friends[name] = newStatus
+    res.status(200).send(friends)
+})
 
-  response.end();
-};
+app.delete('/friends', async (req, res) => {
+    const { name } = req.body
+    const peopleRef = db.collection('people').doc('associates')
+    const res2 = await peopleRef.update({
+        [name]: FieldValue.delete()
+    })
+    res.status(200).send(friends)
+})
 
-// Start web server on port 3000
-server.listen(3000, () => {
-  console.log('Server is listening on port 3000');
-});
+app.listen(port, () => console.log(`Server has started on port: ${port}`))
