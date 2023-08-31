@@ -69,6 +69,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                             sel1.loadOptions();
+                        } else if (interests){
+                            sel1.innerHTML =
+                            interests.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
+                            
+                        sel1.loadOptions();
                         }
                     })
                     .catch(error => {
