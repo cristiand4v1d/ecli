@@ -5,18 +5,102 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil del Usuario</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="profile.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
-  <div class="container" id="profile-container">
-    <!-- Información del perfil del usuario -->
+  <nav class="navigation-bar">
+    <ul class="list-items">
+      <span class="pointer"></span>
+      <li class="item ">
+        <a class="link" href="#">
+          <i class="fas fa-home fa-2x"></i>
+        </a>
+      </li>
+      <li class="item">
+        <a class="link" href="#">
+          <i class="fas fa-bell fa-2x"></i>
+        </a>
+      </li>
+      <li class="item active">
+        <a class="link" href="profile.html">
+          <i class="fas fa-user fa-2x"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <div class="screen">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="profile-container">
+            <div id="user-profile"></div>
+
+            <h3>Intereses:</h3>
+            <select name="field1" id="field1" multiple multiselect-max-items="10">
+
+            </select>
+            <div>&nbsp;</div>
+            <label for="input1">Edad minima:</label>
+            <select id="dropdown1"></select>
+
+            <div>&nbsp;</div>
+            <label for="input2">Edad maxima:</label>
+            <select id="dropdown2"></select>
+            <!-- <style>
+                    select {
+                      width: 30em;
+                    }
+              
+                    .checked input[type="checkbox"] {
+                      background-color: red;
+                    }
+                  </style> -->
+            <div>&nbsp;</div>
+            <button id="update-button">Actualizar</button>
+            <div>&nbsp;</div>
+            <button id="logout-button">Cerrar Sesión</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--  <div class="nav__menu">
+    <ul class="nav__list">
+      <li class="nav__item">
+        <a href="#home" class="nav__link">
+          <i class="fas fa-home"></i>
+          <span class="nav__name">Inicio</span>
+        </a>
+      </li>
+
+      <li class="nav__item">
+        <a href="#about" class="nav__link">
+          <i class="fas fa-calendar-check"></i>
+          <span class="nav__name">Citas</span>
+        </a>
+      </li>
+
+      <li class="nav__item">
+        <a href="profile.html" class="nav__link active-link">
+          <i class="fas fa-user"></i>
+          <span class="nav__name">perfil</span>
+        </a>
+      </li>
+
+
+    </ul>
+  </div> -->
+
+    <!-- <div class="container" id="profile-container">
     <div id="user-profile"></div>
 
-    <!-- Lista de intereses del usuario -->
     <h3>Intereses:</h3>
     <select name="field1" id="field1" multiple multiselect-max-items="10">
 
@@ -37,15 +121,14 @@
         background-color: red;
       }
     </style>
-    <!-- Botón de Cerrar Sesión -->
     <div>&nbsp;</div>
     <button id="update-button">Actualizar</button>
     <div>&nbsp;</div>
     <button id="logout-button">Cerrar Sesión</button>
-  </div>
-  <script src="profile.js"></script>
-  <script src="multiselect-dropdown.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+  </div> -->
+    <script src="profile.js"></script>
+    <script src="multiselect-dropdown.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
     crossorigin="anonymous"></script> -->
 </body>
