@@ -80,23 +80,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function showAlert(type, message) {
-        const profileInfo = `<div class="alert alert-primary" role="alert">
+        /* const profileInfo = `<div class="alert alert-primary" role="alert">
         A simple primary alert—check it out!
       </div>
       `;
 
-        alertContainer.innerHTML = profileInfo;
-        /*  const alert = document.createElement("div");
-         alert.classList.add("alert", `alert-${type}`, "alert-dismissible", "fade", "show");
-         alert.setAttribute("role", "alert");
-         alert.innerHTML = `
+        alertContainer.innerHTML = profileInfo; */
+        const alert = document.createElement("div");
+        alert.classList.add("alert", `alert-${type}`, "alert-dismissible", "fade", "show");
+        alert.setAttribute("role", "alert");
+        alert.innerHTML = `
            ${message}
-           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-             <span aria-hidden="true">&times;</span>
-           </button>
          `;
-     
-         alertContainer.appendChild(alert); */
+
+        alertContainer.appendChild(alert);
 
         // Cierra la alerta automáticamente después de 5 segundos
         setTimeout(() => {
