@@ -120,6 +120,15 @@ app.post('/register', async (req, res) => {
         const userData = req.body;
 
         // Perform validation on userData, e.g., check for required fields
+         // Validate required fields and username uniqueness
+         if (!userData.username || !userData.password) {
+            return res.status(400).send("Username and password are required");
+        }
+
+        const existingUserSnapshot = await db.collection("usuarios").where("username", "==", userData.username).get();
+        if (!existingUserSnapshot.empty) {
+            return res.status(409).send("usuario ya existe");
+        }
 
         // Hash the password before storing it in the database
         const saltRounds = 10;
