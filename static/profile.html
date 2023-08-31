@@ -15,58 +15,54 @@
 </head>
 
 <body>
-  <nav class="navigation-bar">
-    <ul class="list-items">
-      <span class="pointer"></span>
-      <li class="item ">
-        <a class="link" href="#">
-          <i class="fas fa-home fa-2x"></i>
-        </a>
-      </li>
-      <li class="item">
-        <a class="link" href="#">
-          <i class="fas fa-bell fa-2x"></i>
-        </a>
-      </li>
-      <li class="item active">
-        <a class="link" href="profile.html">
-          <i class="fas fa-user fa-2x"></i>
-        </a>
-      </li>
-    </ul>
-  </nav>
-  <div class="screen">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <div id="profile-container">
-            <div id="user-profile"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <nav class="nav">
+          <a href="#" class="nav__link">
+            <i class="fas fa-home fa-2x"></i>
+            <span class="nav__text">Inicio</span>
+          </a>
+          <a href="#" class="nav__link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+              class="bi bi-calendar-heart-fill" viewBox="0 0 16 16">
+              <path
+                d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4V.5ZM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2ZM8 7.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132Z" />
+            </svg> <i class="bi bi-calendar-heart-fill fa-2x"></i>
+            <span class="nav__text">Citas</span>
+          </a>
+          <a href="#" class="nav__link nav__link--active">
+            <i class="fas fa-user fa-2x"></i>
+            <span class="nav__text">Perfil</span>
+          </a>
+        </nav>
+        <div id="profile-container">
+          <div id="user-profile"></div>
 
-            <h3>Intereses:</h3>
-            <select name="field1" id="field1" multiple multiselect-max-items="10">
+          <h3>Intereses:</h3>
+          <select name="field1" id="field1" multiple multiselect-max-items="10">
 
-            </select>
-            <div>&nbsp;</div>
-            <label for="input1">Edad minima:</label>
-            <select id="dropdown1"></select>
+          </select>
+          <div>&nbsp;</div>
+          <label for="input1">Edad minima:</label>
+          <select id="dropdown1"></select>
 
-            <div>&nbsp;</div>
-            <label for="input2">Edad maxima:</label>
-            <select id="dropdown2"></select>
-            <!-- <style>
-                    select {
-                      width: 30em;
-                    }
-              
-                    .checked input[type="checkbox"] {
-                      background-color: red;
-                    }
-                  </style> -->
-            <div>&nbsp;</div>
-            <button id="update-button">Actualizar</button>
-            <div>&nbsp;</div>
-            <button id="logout-button">Cerrar Sesión</button>
-          </div>
+          <div>&nbsp;</div>
+          <label for="input2">Edad maxima:</label>
+          <select id="dropdown2"></select>
+          <style>
+            select {
+              width: 30em;
+            }
+
+            .checked input[type="checkbox"] {
+              background-color: red;
+            }
+          </style>
+          <div>&nbsp;</div>
+          <button id="update-button">Actualizar</button>
+          <div>&nbsp;</div>
+          <button id="logout-button">Cerrar Sesión</button>
         </div>
       </div>
     </div>
