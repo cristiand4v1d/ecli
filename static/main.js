@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.log(data.token)
                     localStorage.setItem('token', JSON.stringify(data.token));
 
-                    window.location.href = 'profile.html';
+                    window.location.href = 'inicio.html';
                 } else {
                     console.log('Inicio de sesión fallido'); // Manejar inicio de sesión fallido
                 }
