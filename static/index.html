@@ -2,56 +2,161 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login y Registro</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login y Registro</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Login</h1>
-        <form id="login-form">
-            <input type="text" id="login-username" placeholder="Username" required>
-            <input type="password" id="login-password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="login-box">
+            <div class="login-snip">
+              <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1"
+                class="tab">Login</label>
+              <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
+              <div class="login-space">
+                <div class="login">
+                  <form id="login-form">
+                    <div class="group">
+                      <label for="user" class="label">Username</label>
+                      <input id="login-username" type="text" class="input" placeholder="Enter your username">
+                    </div>
+                    <div class="group">
+                      <label for="pass" class="label">Password</label>
+                      <input id="login-password" type="password" class="input" data-type="password"
+                        placeholder="Enter your password">
+                    </div>
+                    <div class="group">
+                      <input type="submit" class="btn btn-outline-warning" value="Sign In">
+                    </div>
+                    <!-- <input type="text" id="login-username" placeholder="Username" required>
+                  <input type="password" id="login-password" placeholder="Password" required>
+                  <button type="submit">Login</button> -->
+                  </form>
+                  <!-- <div class="group">
+                  <label for="user" class="label">Username</label>
+                  <input id="user" type="text" class="input" placeholder="Enter your username">
+                </div>
+                <div class="group">
+                  <label for="pass" class="label">Password</label>
+                  <input id="pass" type="password" class="input" data-type="password" placeholder="Enter your password">
+                </div>
+                <div class="group">
+                  <input id="check" type="checkbox" class="check" checked>
+                  <label for="check"><span class="icon"></span> Keep me Signed in</label>
+                </div>
+                <div class="group">
+                  <input type="submit" class="button" value="Sign In">
+                </div>
+                <div class="hr"></div>
+                <div class="foot">
+                  <a href="#">Forgot Password?</a>
+                </div> -->
+                </div>
+                <div class="sign-up-form">
+                  <div class="group">
+                    <label for="user" class="label">Username</label>
+                    <input id="user" type="text" class="input" placeholder="Create your Username">
+                  </div>
+                  <div class="group">
+                    <label for="pass" class="label">Password</label>
+                    <input id="pass" type="password" class="input" data-type="password"
+                      placeholder="Create your password">
+                  </div>
+                  <div class="group">
+                    <label for="pass" class="label">Repeat Password</label>
+                    <input id="pass" type="password" class="input" data-type="password"
+                      placeholder="Repeat your password">
+                  </div>
+                  <div class="group">
+                    <label for="pass" class="label">Email Address</label>
+                    <input id="pass" type="text" class="input" placeholder="Enter your email address">
+                  </div>
+                  <div class="group">
+                    <input type="submit" class="btn btn-outline-warning" value="Sign Up">
+                  </div>
+                  <div class="hr"></div>
+                  <div class="foot">
+                    <label for="tab-1">Already Member?</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="container">
-        <h1>Registro</h1>
-        <form id="register-form">
-            <label for="register-username">Username:</label>
-            <input type="text" id="register-username" placeholder="Username" required>
-            
-            <label for="register-password">Password:</label>
-            <input type="password" id="register-password" placeholder="Password" required>
-            
-            <label for="register-nombre">Nombre:</label>
-            <input type="text" id="register-nombre" placeholder="nombre" required>
-            
-            <label for="register-genero">Género:</label>
-            <select class="input" id="register-genero" required>
-              <option value="Femenino">Femenino</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Otro">Otro</option>
-            </select>
-            
-            <label for="register-busca">Lo que buscas:</label>
-            <select class="input" id="register-busca" required>
-              <option value="Femenino">Femenino</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Otro">Otro</option>
-            </select>
-            
-            <label for="register-edad">Edad:</label>
-            <input type="number" id="register-edad" placeholder="edad" required>
-            
-            <button type="submit">Registrarse</button>
-          </form>
+  <!-- <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert-container mt-3">
+
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script src="main.js"></script>
+  <div class="container">
+
+    <h1>Login</h1>
+    <form id="login-form">
+      <input type="text" id="login-username" placeholder="Username" required>
+      <input type="password" id="login-password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <div class="container">
+    <h1>Registro</h1>
+    <form id="register-form">
+      <label for="register-username">Username:</label>
+      <input type="text" id="register-username" placeholder="Username" required>
+
+      <label for="register-password">Password:</label>
+      <input type="password" id="register-password" placeholder="Password" required>
+
+      <label for="register-nombre">Nombre:</label>
+      <input type="text" id="register-nombre" placeholder="nombre" required>
+
+      <label for="register-genero">Género:</label>
+      <select class="input" id="register-genero" required>
+        <option value="Femenino">Femenino</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Otro">Otro</option>
+      </select>
+
+      <label for="register-busca">Lo que buscas:</label>
+      <select class="input" id="register-busca" required>
+        <option value="Femenino">Femenino</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Otro">Otro</option>
+      </select>
+
+      <label for="register-edad">Edad:</label>
+      <input type="number" id="register-edad" placeholder="edad" required>
+
+      <button type="submit">Registrarse</button>
+    </form>
+  </div> -->
+
+  <script src="main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+    crossorigin="anonymous"></script>
 </body>
 
 </html>

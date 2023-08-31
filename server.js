@@ -127,7 +127,7 @@ app.post('/register', async (req, res) => {
 
         const existingUserSnapshot = await db.collection("usuarios").where("username", "==", userData.username).get();
         if (!existingUserSnapshot.empty) {
-            return res.status(409).send("usuario ya existe");
+            return res.status(400).send({ "message": "usuario ya existe"});
         }
 
         // Hash the password before storing it in the database
