@@ -37,19 +37,55 @@
           </a>
         </nav>
         <div id="profile-container">
-          <div id="user-profile"></div>
+          <div id="user-profile">
 
-          <h3>Intereses:</h3>
-          <select name="field1" id="field1" multiple multiselect-max-items="10">
+          </div>
+          <section class="block">
+            <div class="block__main">
+              <div class="block__header">
+                <h2>Intereses</h2>
+              </div>
+              <div class="block__content">
+                <select name="field1" id="field1" multiple multiselect-max-items="10">
 
-          </select>
-          <div>&nbsp;</div>
+                </select>
+              </div>
+            </div>
+          </section>
+          <section class="block">
+            <div class="block__main">
+              <div class="block__header">
+                <h2>Edad</h2>
+              </div>
+              <div class="block__content">
+                <label for="input1">Edad minima:</label>
+                <select id="dropdown1"></select>
+
+                <div>&nbsp;</div>
+                <label for="input2">Edad maxima:</label>
+                <select id="dropdown2"></select>
+              </div>
+            </div>
+          </section>
+          <section class="block">
+            <div class="block__main">
+              <div class="block__header">
+                <h2></h2>
+              </div>
+              <div class="block__content">
+                <button class="boton btn btn-primary" id="update-button">Actualizar</button>
+                <div>&nbsp;</div>
+                <button class="boton btn btn-primary" id="logout-button">Cerrar Sesión</button>
+              </div>
+            </div>
+          </section>
+          <!--  <div>&nbsp;</div>
           <label for="input1">Edad minima:</label>
           <select id="dropdown1"></select>
 
           <div>&nbsp;</div>
           <label for="input2">Edad maxima:</label>
-          <select id="dropdown2"></select>
+          <select id="dropdown2"></select> -->
           <style>
             select {
               width: 30em;
@@ -59,10 +95,10 @@
               background-color: red;
             }
           </style>
-          <div>&nbsp;</div>
+          <!--  <div>&nbsp;</div>
           <button id="update-button">Actualizar</button>
           <div>&nbsp;</div>
-          <button id="logout-button">Cerrar Sesión</button>
+          <button id="logout-button">Cerrar Sesión</button> -->
         </div>
       </div>
     </div>

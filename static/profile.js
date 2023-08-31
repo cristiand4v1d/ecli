@@ -79,10 +79,19 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
 
                 const profileInfo = `
-          <h2>Perfil de Usuario</h2>
-          <p>Nombre: ${data.nombre}</p>
-          <p>Género: ${data.genero}</p>
-          <!-- Agregar más campos según la estructura de los datos -->
+                <section class="block">
+            <div class="block__main">
+              <div class="block__header">
+                <h2>${data.nombre}</h2>
+              </div>
+              <div class="block__content">
+                <span>
+                ${data.genero}, Mellín
+                </span>
+              </div>
+            </div>
+          </section>
+          
         `;
 
                 profileContainer.innerHTML = profileInfo;

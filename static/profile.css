@@ -44,8 +44,35 @@ body {
 }
 
 
-
+.container{
+    background: #F6F6F6 !important;
+    height: 100vh;
+}
 
 #profile-container{
+    /* padding: 1rem; */
+}
+
+
+.block {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    background: #ffffff;
     padding: 1rem;
+    margin-top: 1rem;
+}
+
+.block__header h2{
+    margin: -2px 0;
+    padding: 2px 0;
+    color: #121212;
+}
+
+.boton{
+    width: 100%;
+    border-radius: 26px !important;
+    min-height: 52px;
+    padding: 8px 32px;
+    background-color: rgb(102, 0, 102) !important;
+    border-color: rgb(102, 0, 102) !important
 }
