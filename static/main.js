@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const alertContainer = document.querySelector(".alert-container");
 
     loginForm.addEventListener("submit", function (event) {
+        mostrarSpinner();
         event.preventDefault();
         const username = document.getElementById("login-username").value;
         const password = document.getElementById("login-password").value;
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    ocultarSpinner();
                     // Suponiendo que la respuesta contiene la URL del perfil del usuario
                     console.log(data.token)
                     localStorage.setItem('token', JSON.stringify(data.token));
@@ -37,11 +39,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Aquí puedes manejar la respuesta del API después del inicio de sesión
             })
             .catch(error => {
+                ocultarSpinner();
                 console.error('Error:', error);
             });
     });
 
     registerForm.addEventListener("submit", function (event) {
+        mostrarSpinner();
         event.preventDefault();
         const username = document.getElementById("register-username").value;
         const password = document.getElementById("register-password").value;
@@ -70,11 +74,14 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => response.json())
             .then(data => {
+                ocultarSpinner();
                 showAlert("danger", data.message);
                 console.log(data)
                 // Aquí puedes manejar la respuesta del API después del registro
             })
             .catch(error => {
+                ocultarSpinner();
+                showAlert("danger", error);
                 console.error('Error:', error);
             });
     });
@@ -100,5 +107,29 @@ document.addEventListener("DOMContentLoaded", function () {
             alert.remove();
         }, 5000);
     }
+
+    // Mostrar el spinner cuando se realiza una solicitud al servidor
+    function mostrarSpinner() {
+        document.getElementById("spinnerContainer").style.display = "flex";
+    }
+
+    // Ocultar el spinner cuando se recibe la respuesta del servidor
+    function ocultarSpinner() {
+        document.getElementById("spinnerContainer").style.display = "none";
+    }
+
+    // Simulación de una solicitud al servidor con un retardo de 3 segundos
+    function hacerSolicitudAlServidor() {
+        mostrarSpinner();
+
+        setTimeout(function () {
+            // Supongamos que aquí ocurre la lógica de manejo de la respuesta del servidor
+            ocultarSpinner();
+        }, 3000); // 3 segundos de retardo
+    }
+
+    // Llamar a la función de ejemplo
+   /*  hacerSolicitudAlServidor(); */
+
 });
 
