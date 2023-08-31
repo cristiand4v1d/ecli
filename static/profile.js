@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const profileInfo = `
           <h2>Perfil de Usuario</h2>
           <p>Nombre: ${data.nombre}</p>
-          <p>Email: ${data.genero}</p>
+          <p>Género: ${data.genero}</p>
           <!-- Agregar más campos según la estructura de los datos -->
         `;
 

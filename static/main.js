@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Suponiendo que la respuesta contiene la URL del perfil del usuario
                     console.log(data.token)
                     localStorage.setItem('token', JSON.stringify(data.token));
-                    
+
                     window.location.href = 'profile.html';
-                  } else {
+                } else {
                     console.log('Inicio de sesión fallido'); // Manejar inicio de sesión fallido
-                  }
-               
-                
+                }
+
+
                 // Aquí puedes manejar la respuesta del API después del inicio de sesión
             })
             .catch(error => {
@@ -44,10 +44,19 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         const username = document.getElementById("register-username").value;
         const password = document.getElementById("register-password").value;
+        const nombre = document.getElementById("register-nombre").value;
+        const genero = document.getElementById("register-genero").value;
+        const edad = document.getElementById("register-edad").value;
+        const busca = document.getElementById("register-busca").value;
 
         const registerData = {
+            nombre: nombre,
+            genero: genero,
+            edad: edad,
+            estado: "activo",
+            password: password,
             username: username,
-            password: password
+            busca: busca
         };
 
         // Enviar datos al API de registro

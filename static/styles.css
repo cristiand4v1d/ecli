@@ -84,6 +84,18 @@ input {
     -webkit-appearance: none;
 }
 
+.input {
+    width: 100%;
+    margin: 0 0 5px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    font-family: arial, verdana, sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
 .mbsc-page {
     padding: 1em;
 }
