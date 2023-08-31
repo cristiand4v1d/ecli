@@ -58,9 +58,10 @@ app.get('/usuarios/:id', async (req, res) => {
 })
 
 app.post('/actualizar-ususario', async (req, res) => {
+    console.log(req.body)
     try {
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ6MVlyU1A0MFg2amxIY1lXbVl6QSIsImlhdCI6MTY5MzQzNTY5NSwiZXhwIjoxNjkzNDM5Mjk1fQ.w6rPIcooIra3fqHpwj3j6kQBBju9qxQlhJ2RE5AiMbg"
-        console.log(token)
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ6MVlyU1A0MFg2amxIY1lXbVl6QSIsImlhdCI6MTY5MzQ0Mjg2MSwiZXhwIjoxNjkzNDQ2NDYxfQ.3zVjls0Erry2zNz85H01wciFnej7q7VNL4p2QPDRZPE"
+        //console.log(token)
         if (!token) {
             return res.status(401).send("No token provided");
         }
