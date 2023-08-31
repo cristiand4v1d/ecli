@@ -1,3 +1,7 @@
+const apiUrl = "http://localhost:3000"
+/* export const apiUrl = "https://ecli.onrender.com" */
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const loginForm = document.getElementById("login-form");
     const registerForm = document.getElementById("register-form");
@@ -15,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         // Enviar datos al API de inicio de sesión
-        fetch('http://localhost:3000/login', {
+        fetch(`${apiUrl}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -24,8 +28,9 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => response.json())
             .then(data => {
+                ocultarSpinner();
+                showAlert("danger", data.message);
                 if (data.success) {
-                    ocultarSpinner();
                     // Suponiendo que la respuesta contiene la URL del perfil del usuario
                     console.log(data.token)
                     localStorage.setItem('token', JSON.stringify(data.token));
@@ -65,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         // Enviar datos al API de registro
-        fetch('http://localhost:3000/register', {
+        fetch(`${apiUrl}/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -119,14 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Simulación de una solicitud al servidor con un retardo de 3 segundos
-    function hacerSolicitudAlServidor() {
-        mostrarSpinner();
-
-        setTimeout(function () {
-            // Supongamos que aquí ocurre la lógica de manejo de la respuesta del servidor
-            ocultarSpinner();
-        }, 3000); // 3 segundos de retardo
-    }
+    
 
     // Llamar a la función de ejemplo
    /*  hacerSolicitudAlServidor(); */

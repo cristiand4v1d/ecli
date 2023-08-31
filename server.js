@@ -122,7 +122,7 @@ app.post('/register', async (req, res) => {
         // Perform validation on userData, e.g., check for required fields
          // Validate required fields and username uniqueness
          if (!userData.username || !userData.password) {
-            return res.status(400).send("Username and password are required");
+            return res.status(400).send({ "message": "Username and password are required"});
         }
 
         const existingUserSnapshot = await db.collection("usuarios").where("username", "==", userData.username).get();
@@ -140,10 +140,10 @@ app.post('/register', async (req, res) => {
         // You can also perform any additional processing or data transformation
 
         const newUserRef = await db.collection("usuarios").add(userData);
-        res.status(201).send({ id: newUserRef.id });
+        res.status(201).send({ "message": "Registro exitoso."});
     } catch (error) {
         console.error(error);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send({ "message": "Internal Server Error"});
     }
 });
 
@@ -156,7 +156,7 @@ app.post('/login', async (req, res) => {
         const userSnapshot = await db.collection("usuarios").where("username", "==", username).get();
 
         if (userSnapshot.empty) {
-            return res.status(401).send("Invalid username or password");
+            return res.status(401).send({ "message": "Usuario o contraseña inválidos"});
         }
 
         const userDoc = userSnapshot.docs[0];
@@ -166,7 +166,7 @@ app.post('/login', async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, userData.password);
 
         if (!passwordMatch) {
-            return res.status(401).send("Invalid username or password");
+            return res.status(401).send({ "message": "Usuario o contraseña inválidos"});
         }
 
         // If username and password are correct, generate a JWT token
@@ -174,7 +174,7 @@ app.post('/login', async (req, res) => {
 
         res.status(200).json({ "token": token, "success": true });
     } catch (error) {
-        res.status(500).send("Internal Server Error");
+        res.status(500).send({ "message": "Internal Server Error"});
     }
 });
 
@@ -185,19 +185,19 @@ app.get('/profile', async (req, res) => {
 
 
         if (!token) {
-            return res.status(401).send("No token provided");
+            return res.status(401).send({ "message": "No token provided"});
         }
 
         jwt.verify(token, 'lemus', async (error, decoded) => {
             if (error) {
-                return res.status(401).send("Invalid token");
+                return res.status(401).send({ "message": "No token provided"});
             }
 
             const userId = decoded.userId;
             const userSnapshot = await db.collection("usuarios").doc(userId).get();
 
             if (!userSnapshot.exists) {
-                return res.status(404).send("User not found");
+                return res.status(404).send({ "message": "User not found"});
             }
 
             const userData = userSnapshot.data();
@@ -205,7 +205,7 @@ app.get('/profile', async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send({ "message": "Internal Server Error"});
     }
 });
 
