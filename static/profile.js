@@ -3,8 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const sel1 = document.getElementById("field1");
     const logoutButton = document.getElementById("logout-button");
     const updateButton = document.getElementById("update-button");
+    const dropdown1 = document.getElementById("dropdown1");
+    const dropdown2 = document.getElementById("dropdown2");
     let selected
     let intereses_selected
+    let selectedValueDropdown1
+    let selectedValueDropdown2
+
 
     sel1.addEventListener("change", handleSelectChange);
     let token = localStorage.getItem('token')
@@ -18,14 +23,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function handleSelectChange(event) {
         intereses_selected = Array.from(this.selectedOptions).map(x => x.value ?? x.text)
-
-        // Hacer algo con los valores seleccionados
-        console.log("Valores seleccionados:", intereses_selected);
     }
-    /* function seleccionados(datos) {
-        console.log("lemus2", datos)
-        //intereses_selected = 
-    } */
+
+    // Agregar evento de cambio al dropdown1
+    dropdown1.addEventListener("change", function () {
+        selectedValueDropdown1 = dropdown1.value;
+        updateDropdown2Options();
+    });
+
+    // Agregar evento de cambio al dropdown2
+    dropdown2.addEventListener("change", function () {
+        selectedValueDropdown2 = dropdown2.value;
+    });
+
+    // Generar opciones para dropdown1
+    for (let i = 18; i <= 100; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        dropdown1.appendChild(option);
+    }
+
+    // Actualizar opciones para dropdown2 en función de dropdown1
+    function updateDropdown2Options() {
+        dropdown2.innerHTML = "";
+        const minAge = parseInt(dropdown1.value) + 1;
+        for (let i = minAge; i <= 100; i++) {
+            const option = document.createElement("option");
+            option.value = i;
+            option.textContent = i;
+            dropdown2.appendChild(option);
+        }
+    }
+
+    // Agregar evento de cambio al dropdown1
+    dropdown1.addEventListener("change", updateDropdown2Options);
+
+    // Generar opciones iniciales para dropdown2
+    updateDropdown2Options();
+
+
 
     if (token) {
         token = token.replace(/^"(.*)"$/, '$1');;
@@ -48,6 +85,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 profileContainer.innerHTML = profileInfo;
                 selected = data.intereses
 
+                // Establecer valores por defecto
+                dropdown1.value = data.edad_min; // Valor por defecto para dropdown1
+                selectedValueDropdown1 = dropdown1.value;
+                dropdown2.value = data.edad_max; // Valor por defecto para dropdown2
+                selectedValueDropdown2 = dropdown2.value;
+
                 fetch('http://localhost:3000/intereses', {
                     method: 'GET',
                 })
@@ -69,11 +112,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                             sel1.loadOptions();
-                        } else if (interests){
+                        } else if (interests) {
                             sel1.innerHTML =
-                            interests.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
-                            
-                        sel1.loadOptions();
+                                interests.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
+
+                            sel1.loadOptions();
                         }
                     })
                     .catch(error => {
@@ -84,9 +127,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error:', error);
             });
 
-            /* Actualizar intereses */
+        /* Actualizar intereses */
         updateButton.addEventListener("click", function () {
             const data = {
+                edad_max: selectedValueDropdown2,
+                edad_min: selectedValueDropdown1,
                 intereses: intereses_selected
             };
             console.log("lemus", data)
