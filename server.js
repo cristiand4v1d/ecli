@@ -79,7 +79,7 @@ app.post('/actualizar-ususario', async (req, res) => {
             const userSnapshot = await db.collection("usuarios").doc(userId).get();
 
             if (!userSnapshot.exists) {
-                return res.status(404).send("User not found");
+                return res.status(404).send({ "message": "User not found"});
             }
 
             const userData = userSnapshot.data();
@@ -90,11 +90,11 @@ app.post('/actualizar-ususario', async (req, res) => {
             await db.collection("usuarios").doc(userId).set(updatedUserData, { merge: true });
 
 
-            res.status(200).json(userData);
+            res.status(200).send({ "message": "Actualizado correctamente"});
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send({ "message": "Internal Server Error"});
     }
 });
 
