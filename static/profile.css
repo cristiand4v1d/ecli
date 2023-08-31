@@ -140,3 +140,7 @@ li {
     height: calc(100% - 80px);
     width: 100%;
 }
+
+select{
+    width: 80%;
+}
