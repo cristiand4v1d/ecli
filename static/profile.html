@@ -2,36 +2,59 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil del Usuario</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil del Usuario</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+
 </head>
 
 <body>
-    <div class="container" id="profile-container">
-        <!-- Información del perfil del usuario -->
-        <div id="user-profile"></div>
+  <div class="container" id="profile-container">
+    <!-- Información del perfil del usuario -->
+    <div id="user-profile"></div>
 
-        <!-- Lista de intereses del usuario -->
-        <h3>Intereses:</h3>
-        <ul id="interest-list"></ul>
+    <!-- Lista de intereses del usuario -->
+    <h3>Intereses:</h3>
+    <ul id="interest-list"></ul>
 
-        <!-- Lista de intereses del usuario -->
-        <h3>Agregar Intereses:</h3>
-        <select id="interest-all" multiple>
-            <!-- Los intereses se agregarán dinámicamente aquí -->
-          </select>
-        <!-- <ul id="interest-all"></ul> -->
+    <!-- Lista de intereses del usuario -->
+    <h3>Agregar Intereses:</h3>
+    <!-- <select id="interest-all" multiple>
+    </select> -->
 
-        <!-- Formulario para agregar intereses -->
+    <select name="field1" id="field1" multiple multiselect-max-items="10">
+      <!-- <option value="1">Audi</option>
+      <option value="2">BMW</option>
+      <option value="3">Mercedes</option>
+      <option value="4">Volvo</option>
+      <option value="5">Lexus</option>
+      <option value="6">Tesla</option> -->
+    </select>
+    <style>
+      select {
+        width: 30em;
+      }
+      .checked  input[type="checkbox"]{
+        background-color: red;
+      }
+    </style>
+    <!-- <ul id="interest-all"></ul> -->
 
-        <!-- <form id="add-interest-form">
+    <!-- Formulario para agregar intereses -->
+
+    <!-- <form id="add-interest-form">
       <input type="text" id="new-interest" placeholder="Nuevo interés">
       <button type="submit">Agregar</button>
     </form> -->
-    </div>
-    <script src="profile.js"></script>
+  </div>
+  <script src="profile.js"></script>
+  <script src="multiselect-dropdown.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+    crossorigin="anonymous"></script> -->
 </body>
 
 </html>

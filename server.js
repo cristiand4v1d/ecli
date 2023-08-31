@@ -104,6 +104,15 @@ app.post('/addfriend', async (req, res) => {
     res.status(200).send(data)
 })
 
+app.post('/agregar-interes', async (req, res) => {
+    let data = req.body
+    data = data.nombre
+    await db.collection("intereses").add({
+        "nombre": data
+    })
+    res.status(200).send(data)
+})
+
 app.post('/register', async (req, res) => {
     try {
         const userData = req.body;
