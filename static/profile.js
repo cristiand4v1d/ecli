@@ -83,11 +83,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 <section class="block">
             <div class="block__main">
               <div class="block__header">
-                <h2>${data.nombre}</h2>
+                <h2>${data.nombre}, ${data.edad}</h2>
               </div>
               <div class="block__content">
                 <span>
-                ${data.genero}, Mellín
+                ${data.genero}, Medellín
                 </span>
               </div>
             </div>
