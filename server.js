@@ -74,12 +74,12 @@ app.post('/actualizar-ususario', async (req, res) => {
 
             const userId = decoded.userId;
 
-           
+
 
             const userSnapshot = await db.collection("usuarios").doc(userId).get();
 
             if (!userSnapshot.exists) {
-                return res.status(404).send({ "message": "User not found"});
+                return res.status(404).send({ "message": "User not found" });
             }
 
             const userData = userSnapshot.data();
@@ -90,11 +90,11 @@ app.post('/actualizar-ususario', async (req, res) => {
             await db.collection("usuarios").doc(userId).set(updatedUserData, { merge: true });
 
 
-            res.status(200).send({ "message": "Actualizado correctamente"});
+            res.status(200).send({ "message": "Actualizado correctamente" });
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ "message": "Internal Server Error"});
+        res.status(500).send({ "message": "Internal Server Error" });
     }
 });
 
@@ -120,14 +120,14 @@ app.post('/register', async (req, res) => {
         const userData = req.body;
 
         // Perform validation on userData, e.g., check for required fields
-         // Validate required fields and username uniqueness
-         if (!userData.username || !userData.password) {
-            return res.status(400).send({ "message": "Username and password are required"});
+        // Validate required fields and username uniqueness
+        if (!userData.username || !userData.password) {
+            return res.status(400).send({ "message": "Username and password are required" });
         }
 
         const existingUserSnapshot = await db.collection("usuarios").where("username", "==", userData.username).get();
         if (!existingUserSnapshot.empty) {
-            return res.status(400).send({ "message": "usuario ya existe"});
+            return res.status(400).send({ "message": "usuario ya existe" });
         }
 
         // Hash the password before storing it in the database
@@ -140,10 +140,10 @@ app.post('/register', async (req, res) => {
         // You can also perform any additional processing or data transformation
 
         const newUserRef = await db.collection("usuarios").add(userData);
-        res.status(201).send({ "message": "Registro exitoso."});
+        res.status(201).send({ "message": "Registro exitoso." });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ "message": "Internal Server Error"});
+        res.status(500).send({ "message": "Internal Server Error" });
     }
 });
 
@@ -156,7 +156,7 @@ app.post('/login', async (req, res) => {
         const userSnapshot = await db.collection("usuarios").where("username", "==", username).get();
 
         if (userSnapshot.empty) {
-            return res.status(401).send({ "message": "Usuario o contraseña inválidos"});
+            return res.status(401).send({ "message": "Usuario o contraseña inválidos" });
         }
 
         const userDoc = userSnapshot.docs[0];
@@ -166,7 +166,7 @@ app.post('/login', async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, userData.password);
 
         if (!passwordMatch) {
-            return res.status(401).send({ "message": "Usuario o contraseña inválidos"});
+            return res.status(401).send({ "message": "Usuario o contraseña inválidos" });
         }
 
         // If username and password are correct, generate a JWT token
@@ -174,30 +174,30 @@ app.post('/login', async (req, res) => {
 
         res.status(200).json({ "token": token, "success": true });
     } catch (error) {
-        res.status(500).send({ "message": "Internal Server Error"});
+        res.status(500).send({ "message": "Internal Server Error" });
     }
 });
 
 app.get('/profile', async (req, res) => {
-    
+
     try {
         const token = req.header('Authorization');
 
 
         if (!token) {
-            return res.status(401).send({ "message": "No token provided"});
+            return res.status(401).send({ "message": "No token provided" });
         }
 
         jwt.verify(token, 'lemus', async (error, decoded) => {
             if (error) {
-                return res.status(401).send({ "message": "No token provided"});
+                return res.status(401).send({ "message": "No token provided" });
             }
 
             const userId = decoded.userId;
             const userSnapshot = await db.collection("usuarios").doc(userId).get();
 
             if (!userSnapshot.exists) {
-                return res.status(404).send({ "message": "User not found"});
+                return res.status(404).send({ "message": "User not found" });
             }
 
             const userData = userSnapshot.data();
@@ -205,9 +205,63 @@ app.get('/profile', async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ "message": "Internal Server Error"});
+        res.status(500).send({ "message": "Internal Server Error" });
     }
 });
+
+
+app.get('/compatibles', async (req, res) => {
+    try {
+        const querySnapshot = await db.collection("usuarios").get();
+        const usuarios = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        let matches = []
+        
+        for (let i = 0; i < usuarios.length; i++) {
+            for (let j = 0; j < usuarios.length; j++) {
+                if (i !== j) {
+                    const compatibilidad = calcularCompatibilidad(usuarios[i], usuarios[j]);
+                    if (compatibilidad > 0) {
+                       //console.log(`${usuarios[i].nombre} y ${usuarios[j].nombre} son compatibles con una puntuación de ${compatibilidad.toFixed(2)}%`);
+                       matches.push(`${usuarios[i].nombre} - ${usuarios[i].id} y ${usuarios[j].nombre} - - ${usuarios[j].id} son compatibles con una puntuación de ${compatibilidad.toFixed(2)}%`);
+                    }
+                }
+            }
+        }
+        console.log(matches)
+        res.status(200).send(matches)
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+function calcularCompatibilidad(usuario1, usuario2) {
+    if (usuario1.genero === "Masculino" && usuario2.genero === "Femenino") {
+        const interesesComunes = calcularInteresesEnComun(usuario1, usuario2);
+        const porcentajeCompatibilidad = (interesesComunes / usuario1.intereses.length) * 100;
+        const rangoEdad = Math.abs(usuario1.edad - usuario2.edad);
+        const factorEdad = Math.max(1 - (rangoEdad / 10), 0);
+
+         if (
+             usuario1.edad_min <= usuario2.edad && usuario2.edad <= usuario1.edad_max &&
+             usuario2.edad_min <= usuario1.edad && usuario1.edad <= usuario2.edad_max
+         ) { 
+             if (porcentajeCompatibilidad >= 70) {    
+                 return porcentajeCompatibilidad;
+             }
+         }
+    }
+
+    return 0;
+}
+
+function calcularInteresesEnComun(usuario1, usuario2) {
+    const interesesComunes = usuario1.intereses.filter(interes => usuario2.intereses.includes(interes));
+    return interesesComunes.length;
+}
+
 
 
 app.listen(port, () => console.log(`Server has started on port: ${port}`))
