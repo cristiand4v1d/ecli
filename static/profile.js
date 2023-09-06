@@ -3,19 +3,22 @@ const apiUrl = "http://localhost:3000"
 
 document.addEventListener("DOMContentLoaded", function () {
     const profileContainer = document.getElementById("user-profile");
-    const sel1 = document.getElementById("field1");
+    const musicaSelect = document.getElementById("field1");
+    const literaturaSelect = document.getElementById("field2");
     const logoutButton = document.getElementById("logout-button");
     const updateButton = document.getElementById("update-button");
     const dropdown1 = document.getElementById("dropdown1");
     const dropdown2 = document.getElementById("dropdown2");
     const alertContainer = document.querySelector(".alert-container");
     let selected
-    let intereses_selected
+    let musica_selected
+    let literatura_selected
     let selectedValueDropdown1
     let selectedValueDropdown2
 
 
-    sel1.addEventListener("change", handleSelectChange);
+    musicaSelect.addEventListener("change", handleSelectChange);
+    literaturaSelect.addEventListener("change", handleSelectChangeLectura);
     let token = localStorage.getItem('token')
     // Agregar evento de clic al botón de Cerrar Sesión
     logoutButton.addEventListener("click", function () {
@@ -26,7 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function handleSelectChange(event) {
-        intereses_selected = Array.from(this.selectedOptions).map(x => x.value ?? x.text)
+        musica_selected = Array.from(this.selectedOptions).map(x => x.value ?? x.text)
+    }
+
+    function handleSelectChangeLectura(event) {
+        literatura_selected = Array.from(this.selectedOptions).map(x => x.value ?? x.text)
     }
 
     // Agregar evento de cambio al dropdown1
@@ -96,7 +103,8 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
 
                 profileContainer.innerHTML = profileInfo;
-                selected = data.intereses
+                musica_selected = data.intereses.musica
+                literatura_selected = data.intereses.literatura
 
                 // Establecer valores por defecto
                 dropdown1.value = data.edad_min; // Valor por defecto para dropdown1
@@ -109,27 +117,40 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                     .then(response => response.json())
                     .then(interests => {
-
-                        //debugger
-                        /* const interestsList = interests.map(interest => `<option>${interest.nombre}</option>`).join('');
-                        InterestsList.innerHTML = interestsList; */
-                        if (selected && interests) {
+                        const musica = interests.musica
+                        const literatura = interests.literatura
+                        
+                        if (musica_selected && musica) {
                             //debugger
-                            sel1.innerHTML =
+                            musicaSelect.innerHTML =
                                 /* interests.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>'); */
-                                interests.map(
+                                musica.map(
                                     t =>
-                                        `<option value="${t.nombre}" ${selected.includes(t.nombre) ? "selected" : ""
+                                        `<option value="${t.nombre}" ${musica_selected.includes(t.nombre) ? "selected" : ""
                                         }>${t.nombre}</option>`
                                 ).join("");
+                            musicaSelect.loadOptions();
+                        } else if (musica) {
+                            musicaSelect.innerHTML =
+                                musica.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
 
+                            musicaSelect.loadOptions();
+                        }
+                        if (literatura_selected && literatura) {
+                            //debugger
+                            literaturaSelect.innerHTML =
+                                /* interests.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>'); */
+                                literatura.map(
+                                    t =>
+                                        `<option value="${t.nombre}" ${literatura_selected.includes(t.nombre) ? "selected" : ""
+                                        }>${t.nombre}</option>`
+                                ).join("");
+                                literaturaSelect.loadOptions();
+                        } else if (literatura) {
+                            literaturaSelect.innerHTML =
+                            literatura.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
 
-                            sel1.loadOptions();
-                        } else if (interests) {
-                            sel1.innerHTML =
-                                interests.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
-
-                            sel1.loadOptions();
+                            literaturaSelect.loadOptions();
                         }
                     })
                     .catch(error => {
@@ -146,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = {
                 edad_max: selectedValueDropdown2,
                 edad_min: selectedValueDropdown1,
-                intereses: intereses_selected
+                intereses: {musica: musica_selected, literatura: literatura_selected}
             };
             console.log("lemus", data)
             fetch(`${apiUrl}/actualizar-ususario`, {

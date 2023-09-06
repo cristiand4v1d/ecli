@@ -23,12 +23,22 @@ app.use(cors({
 
 app.get('/intereses', async (req, res) => {
     try {
-        const querySnapshot = await db.collection("intereses").get();
+        /* const querySnapshot = await db.collection("intereses").get();
         const contacts = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
+        })); */
+        const queryliteratura = await db.collection("literatura").get();
+        const literatura = queryliteratura.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
         }));
-        res.status(200).send(contacts)
+        const querymusica = await db.collection("musica").get();
+        const musica = querymusica.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        res.status(200).send({"literatura": literatura, "musica": musica})
     } catch (error) {
         console.error(error);
     }
@@ -210,6 +220,25 @@ app.get('/profile', async (req, res) => {
 });
 
 
+app.post('/agregar-interes/musica', async (req, res) => {
+    let data = req.body
+    data = data.nombre
+    await db.collection("musica").add({
+        "nombre": data
+    })
+    res.status(200).send(data)
+})
+
+app.post('/agregar-interes/literatura', async (req, res) => {
+    let data = req.body
+    data = data.nombre
+    await db.collection("literatura").add({
+        "nombre": data
+    })
+    res.status(200).send(data)
+})
+
+
 app.get('/compatibles', async (req, res) => {
     try {
         const querySnapshot = await db.collection("usuarios").get();
@@ -224,7 +253,6 @@ app.get('/compatibles', async (req, res) => {
                 if (i !== j) {
                     const compatibilidad = calcularCompatibilidad(usuarios[i], usuarios[j]);
                     if (compatibilidad > 0) {
-                       //console.log(`${usuarios[i].nombre} y ${usuarios[j].nombre} son compatibles con una puntuación de ${compatibilidad.toFixed(2)}%`);
                        matches.push(`${usuarios[i].nombre} - ${usuarios[i].id} y ${usuarios[j].nombre} - - ${usuarios[j].id} son compatibles con una puntuación de ${compatibilidad.toFixed(2)}%`);
                     }
                 }

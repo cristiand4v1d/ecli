@@ -144,9 +144,13 @@ body {
     margin-bottom: 56px;
 }
 
+.consejos .col-6{
+    margin-bottom: 1rem;
+}
+
 .image-text-overlay {
     width: 100%;
-    height: 80%;
+    height: 191px;
     border-radius: 1rem;
     background-size: cover;
     background-repeat: no-repeat;
@@ -156,7 +160,7 @@ body {
 .text-consejos {
     align-items: center;
     display: flex;
-    height: 100px;
+    height: 100%;
     justify-content: center;
     color: white;
     text-align: center;
