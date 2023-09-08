@@ -192,7 +192,7 @@ app.get('/profile', async (req, res) => {
 
     try {
         const token = req.header('Authorization');
-
+        console.log(token)
 
         if (!token) {
             return res.status(401).send({ "message": "No token provided" });
@@ -200,7 +200,7 @@ app.get('/profile', async (req, res) => {
 
         jwt.verify(token, 'lemus', async (error, decoded) => {
             if (error) {
-                return res.status(401).send({ "message": "No token provided" });
+                return res.status(401).send({ "message": "Token no válido" });
             }
 
             const userId = decoded.userId;

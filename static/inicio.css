@@ -193,3 +193,13 @@ body {
 .image-text-overlay .overlay-black {
     background: #000;
 }
+
+
+
+.carousel-item{
+    width: 100%;
+    height: 191px;
+    border-radius: 1rem;
+    background-size: cover;
+    background-repeat: no-repeat;
+}

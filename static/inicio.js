@@ -14,7 +14,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let selectedValueDropdown1
     let selectedValueDropdown2
 
-    
+    let token = localStorage.getItem('token')
+    if (!token) {
+        window.location.href = 'index.html';
+    }
 
     function showAlert(type, message) {
         /* const profileInfo = `<div class="alert alert-primary" role="alert">

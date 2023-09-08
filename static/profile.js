@@ -2,6 +2,7 @@ const apiUrl = "http://localhost:3000"
 /* const apiUrl = "https://ecli.onrender.com" */
 
 document.addEventListener("DOMContentLoaded", function () {
+    mostrarSpinner();
     const profileContainer = document.getElementById("user-profile");
     const musicaSelect = document.getElementById("field1");
     const literaturaSelect = document.getElementById("field2");
@@ -20,6 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
     musicaSelect.addEventListener("change", handleSelectChange);
     literaturaSelect.addEventListener("change", handleSelectChangeLectura);
     let token = localStorage.getItem('token')
+    if (!token) {
+        window.location.href = 'index.html';
+    }
     // Agregar evento de clic al botón de Cerrar Sesión
     logoutButton.addEventListener("click", function () {
         // Eliminar el token de localStorage
@@ -85,7 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => response.json())
             .then(data => {
-
+                if (data?.message == 'Token no válido') {
+                    localStorage.removeItem("token");
+                    // Redireccionar a la página de inicio de sesión
+                    window.location.href = "index.html";
+                }
+                ocultarSpinner();
                 const profileInfo = `
                 <section class="block">
             <div class="block__main">
@@ -103,8 +112,8 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
 
                 profileContainer.innerHTML = profileInfo;
-                musica_selected = data.intereses.musica
-                literatura_selected = data.intereses.literatura
+                musica_selected = data?.intereses?.musica;
+                literatura_selected = data?.intereses?.literatura;
 
                 // Establecer valores por defecto
                 dropdown1.value = data.edad_min; // Valor por defecto para dropdown1
@@ -117,9 +126,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 })
                     .then(response => response.json())
                     .then(interests => {
+
                         const musica = interests.musica
                         const literatura = interests.literatura
-                        
+
                         if (musica_selected && musica) {
                             //debugger
                             musicaSelect.innerHTML =
@@ -145,10 +155,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                         `<option value="${t.nombre}" ${literatura_selected.includes(t.nombre) ? "selected" : ""
                                         }>${t.nombre}</option>`
                                 ).join("");
-                                literaturaSelect.loadOptions();
+                            literaturaSelect.loadOptions();
                         } else if (literatura) {
                             literaturaSelect.innerHTML =
-                            literatura.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
+                                literatura.map(t => '<option value="' + t.nombre + '">' + t.nombre + '</option>');
 
                             literaturaSelect.loadOptions();
                         }
@@ -167,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const data = {
                 edad_max: selectedValueDropdown2,
                 edad_min: selectedValueDropdown1,
-                intereses: {musica: musica_selected, literatura: literatura_selected}
+                intereses: { musica: musica_selected, literatura: literatura_selected }
             };
             console.log("lemus", data)
             fetch(`${apiUrl}/actualizar-ususario`, {
@@ -220,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Mostrar el spinner cuando se realiza una solicitud al servidor
     function mostrarSpinner() {
-        console.log("lemus")
+       
         document.getElementById("spinnerContainer").style.display = "flex";
     }
 
