@@ -1,5 +1,5 @@
-const apiUrl = "http://localhost:3000"
-/* const apiUrl = "https://ecli.onrender.com" */
+/* const apiUrl = "http://localhost:3000" */
+const apiUrl = "https://ecli.onrender.com"
 
 document.addEventListener("DOMContentLoaded", function () {
     const profileContainer = document.getElementById("user-profile");
