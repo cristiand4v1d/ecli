@@ -38,7 +38,7 @@ app.get('/intereses', async (req, res) => {
             id: doc.id,
             ...doc.data(),
         }));
-        res.status(200).send({"literatura": literatura, "musica": musica})
+        res.status(200).send({ "literatura": literatura, "musica": musica })
     } catch (error) {
         console.error(error);
     }
@@ -117,6 +117,22 @@ app.post('/addfriend', async (req, res) => {
 })
 
 app.post('/agregar-interes', async (req, res) => {
+    try {
+        const token = req.header('Authorization');
+
+        if (!token) {
+            return res.status(401).send({ "message": "No token provided" });
+        }
+
+        jwt.verify(token, 'lemus', async (error, decoded) => {
+            if (error) {
+                return res.status(401).send({ "message": "Token no válido" });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "message": "Internal Server Error" });
+    }
     let data = req.body
     data = data.nombre
     await db.collection("intereses").add({
@@ -221,6 +237,22 @@ app.get('/profile', async (req, res) => {
 
 
 app.post('/agregar-interes/musica', async (req, res) => {
+    try {
+        const token = req.header('Authorization');
+
+        if (!token) {
+            return res.status(401).send({ "message": "No token provided" });
+        }
+
+        jwt.verify(token, 'lemus', async (error, decoded) => {
+            if (error) {
+                return res.status(401).send({ "message": "Token no válido" });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "message": "Internal Server Error" });
+    }
     let data = req.body
     data = data.nombre
     await db.collection("musica").add({
@@ -230,6 +262,22 @@ app.post('/agregar-interes/musica', async (req, res) => {
 })
 
 app.post('/agregar-interes/literatura', async (req, res) => {
+    try {
+        const token = req.header('Authorization');
+
+        if (!token) {
+            return res.status(401).send({ "message": "No token provided" });
+        }
+
+        jwt.verify(token, 'lemus', async (error, decoded) => {
+            if (error) {
+                return res.status(401).send({ "message": "Token no válido" });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "message": "Internal Server Error" });
+    }
     let data = req.body
     data = data.nombre
     await db.collection("literatura").add({
@@ -241,19 +289,35 @@ app.post('/agregar-interes/literatura', async (req, res) => {
 
 app.get('/compatibles', async (req, res) => {
     try {
+        const token = req.header('Authorization');
+
+        if (!token) {
+            return res.status(401).send({ "message": "No token provided" });
+        }
+
+        jwt.verify(token, 'lemus', async (error, decoded) => {
+            if (error) {
+                return res.status(401).send({ "message": "Token no válido" });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "message": "Internal Server Error" });
+    }
+    try {
         const querySnapshot = await db.collection("usuarios").get();
         const usuarios = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
         }));
         let matches = []
-        
+
         for (let i = 0; i < usuarios.length; i++) {
             for (let j = 0; j < usuarios.length; j++) {
                 if (i !== j) {
                     const compatibilidad = calcularCompatibilidad(usuarios[i], usuarios[j]);
                     if (compatibilidad > 0) {
-                       matches.push(`${usuarios[i].nombre} - ${usuarios[i].id} y ${usuarios[j].nombre} - - ${usuarios[j].id} son compatibles con una puntuación de ${compatibilidad.toFixed(2)}%`);
+                        matches.push(`${usuarios[i].nombre} - ${usuarios[i].id} y ${usuarios[j].nombre} - - ${usuarios[j].id} son compatibles con una puntuación de ${compatibilidad.toFixed(2)}%`);
                     }
                 }
             }
@@ -272,14 +336,14 @@ function calcularCompatibilidad(usuario1, usuario2) {
         const rangoEdad = Math.abs(usuario1.edad - usuario2.edad);
         const factorEdad = Math.max(1 - (rangoEdad / 10), 0);
 
-         if (
-             usuario1.edad_min <= usuario2.edad && usuario2.edad <= usuario1.edad_max &&
-             usuario2.edad_min <= usuario1.edad && usuario1.edad <= usuario2.edad_max
-         ) { 
-             if (porcentajeCompatibilidad >= 70) {    
-                 return porcentajeCompatibilidad;
-             }
-         }
+        if (
+            usuario1.edad_min <= usuario2.edad && usuario2.edad <= usuario1.edad_max &&
+            usuario2.edad_min <= usuario1.edad && usuario1.edad <= usuario2.edad_max
+        ) {
+            if (porcentajeCompatibilidad >= 70) {
+                return porcentajeCompatibilidad;
+            }
+        }
     }
 
     return 0;
