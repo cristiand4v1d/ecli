@@ -11,19 +11,32 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
     crossorigin="anonymous"></script>
-    <link rel="icon" href="favicon.ico">
+  <link rel="icon" href="favicon.ico">
 
 </head>
 
 <body>
   <div class="moon-container">
     <div class="moon"></div>
+    <div>&nbsp;</div>
+    <p style="    text-align: center;
+    color: white;
+    font-size: 2rem;">
+      Eclipses
+    </p>
   </div>
   <div class="spinner-container" id="spinnerContainer">
     <div class="spinner"></div>
   </div>
   <div class="login-wrap">
     <div class="login-html">
+      <div style="color: white;
+      font-size: 2rem;
+      text-align: center;">
+        <img src="favicon.ico" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+        Eclipses
+      </div>
+      <div>&nbsp;</div>
       <div class="alert-container" style="position: fixed;
   top: 70px;
   left: 5%;
@@ -31,17 +44,19 @@
   max-width: 90%; 
   text-align: center;">
       </div>
-      <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab label-sing">Sign In</label>
-      <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab label-sing">Sign Up</label>
+      <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1"
+        class="tab label-sing">Iniciar Sesión</label>
+      <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2"
+        class="tab label-sing">Regístrate</label>
       <div class="login-form">
         <div class="sign-in-htm">
           <form id="login-form">
             <div class="group">
-              <label for="user" class="label">Username</label>
+              <label for="user" class="label">Usuario</label>
               <input id="login-username" type="text" class="input">
             </div>
             <div class="group">
-              <label for="pass" class="label">Password</label>
+              <label for="pass" class="label">Contraseña</label>
               <input id="login-password" type="password" class="input" data-type="password">
             </div>
             <div class="group">
@@ -52,11 +67,11 @@
         <div class="sign-up-htm">
           <form id="register-form">
             <div class="group">
-              <label for="user" class="label">Username</label>
+              <label for="user" class="label">usuario</label>
               <input id="register-username" type="text" class="input" required>
             </div>
             <div class="group">
-              <label for="pass" class="label">Password</label>
+              <label for="pass" class="label">Contraseña</label>
               <input id="register-password" type="password" class="input" data-type="password" required>
             </div>
             <div class="group">

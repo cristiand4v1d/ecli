@@ -28,7 +28,7 @@
 }
 
 .moon {
-	background-image: linear-gradient(30deg, #13223f, #0e1a30);
+	background-image: linear-gradient(30deg, #660066, #660066);
 	width: 256px;
 	height: 256px;
 	border-radius: 50%;
@@ -39,7 +39,7 @@
 
 .moon::before {
 	content: '';
-	background-color: #C7938B;
+	background-color: #ccc;
 	position: absolute;
 	display: block;
 	height: 100%;
@@ -134,7 +134,7 @@ a {
 }
 
 .login-html .tab {
-	font-size: 22px;
+	font-size: 15px;
 	margin-right: 15px;
 	padding-bottom: 5px;
 	margin: 0 15px 10px 0;
