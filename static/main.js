@@ -1,5 +1,5 @@
-/* const apiUrl = "http://localhost:3000" */
-const apiUrl = "https://ecli.onrender.com"
+const apiUrl = "http://localhost:3000"
+/* const apiUrl = "https://ecli.onrender.com" */
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const nombre = document.getElementById("register-nombre").value;
         const genero = document.getElementById("register-genero").value;
         const edad = document.getElementById("register-edad").value;
-        const busca = document.getElementById("register-busca").value;
+        const genero_busca = document.getElementById("register-genero-busca").value;
 
         const registerData = {
             nombre: nombre,
