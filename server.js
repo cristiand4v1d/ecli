@@ -466,6 +466,37 @@ function calcularInteresesEnComun2(usuario1, usuario2) {
     return interesesComunes.length;
 } */
 
+app.get('/matches/:id', async (req, res) => {
+    try {
+        // Consulta Firestore para encontrar el match en el campo "usuario1.id"
+        const querySnapshotUsuario1 = await db.collection("matches")
+            .where("usuario1.id", "==", req.params.id)
+            .get();
 
+        // Consulta Firestore para encontrar el match en el campo "usuario2.id"
+        const querySnapshotUsuario2 = await db.collection("matches")
+            .where("usuario2.id", "==", req.params.id)
+            .get();
+
+        // Obtener los matches que cumplan con la condición
+        const matchesUsuario1 = querySnapshotUsuario1.docs.map(doc => doc.data());
+        const matchesUsuario2 = querySnapshotUsuario2.docs.map(doc => doc.data());
+
+        // Combinar los resultados de ambas consultas
+        const matches = [...matchesUsuario1, ...matchesUsuario2];
+        res.status(200).send(matches)
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+/* app.get('/matches/:id', async (req, res) => {
+    try {
+        const querySnapshot = await db.collection("matches").doc(req.params.id).get();
+        res.status(200).send(querySnapshot.data())
+    } catch (error) {
+        console.error(error);
+    }
+}) */
 
 app.listen(port, () => console.log(`Server has started on port: ${port}`))
