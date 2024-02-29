@@ -44,6 +44,19 @@ app.get('/intereses', async (req, res) => {
     }
 })
 
+app.get('/all-interests', async (req, res) => {
+    try {
+        const queryIntereses = await db.collection("intereses").get();
+        const intereses = queryIntereses.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        res.status(200).send(intereses)
+    } catch (error) {
+        console.error(error);
+    }
+})
+
 
 app.get('/usuarios', async (req, res) => {
     try {
@@ -312,30 +325,88 @@ app.get('/compatibles', async (req, res) => {
         }));
         let matches = []
 
+        let categoriasIntereses = [];
+        try {
+            const queryIntereses = await db.collection("intereses").get();
+            categoriasIntereses = queryIntereses.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+        } catch (error) {
+            console.error(error);
+        }
+
+        categoriasIntereses = categoriasIntereses.map(categoria => categoria.nombre);
+
         for (let i = 0; i < usuarios.length; i++) {
             for (let j = 0; j < usuarios.length; j++) {
                 if (i !== j) {
-                    const compatibilidad = calcularCompatibilidad(usuarios[i], usuarios[j]);
+                    const compatibilidad = calcularCompatibilidad(usuarios[i], usuarios[j], categoriasIntereses);
+
                     if (compatibilidad > 0) {
-                        matches.push(`${usuarios[i].nombre} - ${usuarios[i].id} y ${usuarios[j].nombre} - - ${usuarios[j].id} son compatibles con una puntuación de ${compatibilidad.toFixed(2)}%`);
+                        matches.push({
+                            "porcentaje": compatibilidad.toFixed(2),
+                            "usuario1": {
+                                "id": usuarios[i].id,
+                                "nombre": usuarios[i].nombre
+                            },
+                            "usuario2": {
+                                "id": usuarios[j].id,
+                                "nombre": usuarios[j].nombre
+                            }
+                        });
+
                     }
                 }
             }
         }
-        console.log(matches)
+        for (const match of matches) {
+            try {
+                await db.collection("matches").add(match);
+            } catch (error) {
+                console.error("Error al agregar el documento a Firestore:", error);
+            }
+        }
         res.status(200).send(matches)
+        
     } catch (error) {
         console.error(error);
     }
 })
 
-function calcularCompatibilidad(usuario1, usuario2) {
+function calcularCompatibilidad(usuario1, usuario2, categoriasIntereses) {
+    if (!usuario1.intereses || !usuario2.intereses) {
+        // Si uno de los usuarios no tiene definidos los intereses, retornamos 0
+        return 0;
+    }
+
+
+    if (usuario1.genero === "Masculino" && usuario2.genero === "Femenino") {
+        const interesesComunes = calcularInteresesEnComun(usuario1, usuario2, categoriasIntereses);
+        const totalInteresesUsuario1 = Object.values(usuario1.intereses).flat().length;
+        const porcentajeCompatibilidad = (interesesComunes / totalInteresesUsuario1) * 100;
+
+        if (
+            usuario1.edad_min <= usuario2.edad && usuario2.edad <= usuario1.edad_max &&
+            usuario2.edad_min <= usuario1.edad && usuario1.edad <= usuario2.edad_max
+        ) {
+            if (porcentajeCompatibilidad >= 70) {
+                return porcentajeCompatibilidad; // Considerar factor de edad en el porcentaje de compatibilidad
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+/* function calcularCompatibilidad(usuario1, usuario2) {
     if (usuario1.genero === "Masculino" && usuario2.genero === "Femenino") {
         const interesesComunes = calcularInteresesEnComun(usuario1, usuario2);
         const porcentajeCompatibilidad = (interesesComunes / usuario1.intereses.length) * 100;
+        console.log(usuario1.intereses.length)
         const rangoEdad = Math.abs(usuario1.edad - usuario2.edad);
         const factorEdad = Math.max(1 - (rangoEdad / 10), 0);
-
         if (
             usuario1.edad_min <= usuario2.edad && usuario2.edad <= usuario1.edad_max &&
             usuario2.edad_min <= usuario1.edad && usuario1.edad <= usuario2.edad_max
@@ -347,12 +418,53 @@ function calcularCompatibilidad(usuario1, usuario2) {
     }
 
     return 0;
+} */
+
+function calcularInteresesEnComun(usuario1, usuario2, categoriasIntereses) {
+    if (!usuario1.intereses || !usuario2.intereses) {
+        // Si uno de los usuarios no tiene definidos los intereses, retornamos 0
+        return 0;
+    }
+    const interesesComunes = [];
+
+    for (const categoria of categoriasIntereses) {
+        const interesesComunesCategoria = usuario1.intereses[categoria].filter(interes => usuario2.intereses[categoria].includes(interes));
+        interesesComunes.push(...interesesComunesCategoria);
+    }
+
+    return interesesComunes.length;
+
 }
 
-function calcularInteresesEnComun(usuario1, usuario2) {
-    const interesesComunes = usuario1.intereses.filter(interes => usuario2.intereses.includes(interes));
+
+function calcularInteresesEnComun2(usuario1, usuario2) {
+    if (!usuario1.intereses || !usuario2.intereses) {
+        // Si uno de los usuarios no tiene definidos los intereses, retornamos 0
+        return 0;
+    }
+
+    const interesesComunes = [];
+
+    // Filtrar intereses de música comunes
+    const musicaComun = usuario1.intereses.musica.filter(interes => usuario2.intereses.musica.includes(interes));
+    //console.log(musicaComun)
+    // Filtrar intereses de literatura comunes
+    const literaturaComun = usuario1.intereses.literatura.filter(interes => usuario2.intereses.literatura.includes(interes));
+    //console.log(literaturaComun)
+
+    // Concatenar los intereses comunes de ambas categorías
+    interesesComunes.push(...musicaComun, ...literaturaComun);
+
     return interesesComunes.length;
 }
+
+
+/* function calcularInteresesEnComun(usuario1, usuario2) {
+    console.log(usuario1, usuario2)
+
+    const interesesComunes = usuario1.intereses.filter(interes => usuario2.intereses.includes(interes));
+    return interesesComunes.length;
+} */
 
 
 
