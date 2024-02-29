@@ -211,7 +211,7 @@ app.post('/login', async (req, res) => {
         // If username and password are correct, generate a JWT token
         const token = jwt.sign({ userId: userDoc.id }, 'lemus', { expiresIn: '1h' });
 
-        res.status(200).json({ "token": token, "success": true });
+        res.status(200).json({ "token": token, "user": userDoc, "success": true });
     } catch (error) {
         res.status(500).send({ "message": "Internal Server Error" });
     }
@@ -368,7 +368,7 @@ app.get('/compatibles', async (req, res) => {
             }
         }
         res.status(200).send(matches)
-        
+
     } catch (error) {
         console.error(error);
     }
