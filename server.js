@@ -299,8 +299,84 @@ app.post('/agregar-interes/literatura', async (req, res) => {
     res.status(200).send(data)
 })
 
-
 app.get('/compatibles', async (req, res) => {
+    try {
+        const token = req.header('Authorization');
+
+        if (!token) {
+            return res.status(401).send({ "message": "No se proporcionó ningún token" });
+        }
+
+        jwt.verify(token, 'lemus', async (error, decoded) => {
+            if (error) {
+                return res.status(401).send({ "message": "Token no válido" });
+            }
+
+            // Si el token es válido, procede a buscar compatibilidades
+            try {
+                const querySnapshot = await db.collection("usuarios").get();
+                const usuarios = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                let matches = []
+
+                let categoriasIntereses = [];
+                try {
+                    const queryIntereses = await db.collection("intereses").get();
+                    categoriasIntereses = queryIntereses.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
+                } catch (error) {
+                    console.error(error);
+                }
+
+                categoriasIntereses = categoriasIntereses.map(categoria => categoria.nombre);
+
+                for (let i = 0; i < usuarios.length; i++) {
+                    for (let j = 0; j < usuarios.length; j++) {
+                        if (i !== j) {
+                            const compatibilidad = calcularCompatibilidad(usuarios[i], usuarios[j], categoriasIntereses);
+
+                            if (compatibilidad > 0) {
+                                matches.push({
+                                    "porcentaje": compatibilidad.toFixed(2),
+                                    "usuario1": {
+                                        "id": usuarios[i].id,
+                                        "nombre": usuarios[i].nombre
+                                    },
+                                    "usuario2": {
+                                        "id": usuarios[j].id,
+                                        "nombre": usuarios[j].nombre
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                }
+                for (const match of matches) {
+                    try {
+                        await db.collection("matches").add(match);
+                    } catch (error) {
+                        console.error("Error al agregar el documento a Firestore:", error);
+                    }
+                }
+                res.status(200).send(matches)
+            } catch (error) {
+                console.error(error);
+                res.status(500).send({ "message": "Error interno del servidor" });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "message": "Error interno del servidor" });
+    }
+})
+
+
+app.get('/compatibless', async (req, res) => {
     try {
         const token = req.header('Authorization');
 
@@ -368,7 +444,6 @@ app.get('/compatibles', async (req, res) => {
             }
         }
         res.status(200).send(matches)
-
     } catch (error) {
         console.error(error);
     }
