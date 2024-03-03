@@ -319,7 +319,6 @@ app.get('/compatibles', async (req, res) => {
                     id: doc.id,
                     ...doc.data(),
                 }));
-                let matches = []
 
                 let categoriasIntereses = [];
                 try {
@@ -334,36 +333,54 @@ app.get('/compatibles', async (req, res) => {
 
                 categoriasIntereses = categoriasIntereses.map(categoria => categoria.nombre);
 
+                let existingMatches = [];
+
+                // Obtener todos los matches existentes de la base de datos
+                const queryMatches = await db.collection("matches").get();
+                existingMatches = queryMatches.docs.map((doc) => doc.data());
+
+                // Array para almacenar los nuevos matches a agregar
+                let newMatches = [];
+
                 for (let i = 0; i < usuarios.length; i++) {
                     for (let j = 0; j < usuarios.length; j++) {
                         if (i !== j) {
                             const compatibilidad = calcularCompatibilidad(usuarios[i], usuarios[j], categoriasIntereses);
 
                             if (compatibilidad > 0) {
-                                matches.push({
-                                    "porcentaje": compatibilidad.toFixed(2),
-                                    "usuario1": {
-                                        "id": usuarios[i].id,
-                                        "nombre": usuarios[i].nombre
-                                    },
-                                    "usuario2": {
-                                        "id": usuarios[j].id,
-                                        "nombre": usuarios[j].nombre
-                                    }
-                                });
+                                // Verificar si ya existe un match con estos usuarios
+                                const existingMatch = existingMatches.find(match =>
+                                    (match.usuario1.id === usuarios[j].id && match.usuario2.id === usuarios[i].id) ||
+                                    (match.usuario1.id === usuarios[i].id && match.usuario2.id === usuarios[j].id)
+                                );
 
+                                if (!existingMatch) {
+                                    // Si no existe un match, agregarlo a la lista de nuevos matches
+                                    newMatches.push({
+                                        "porcentaje": compatibilidad.toFixed(2),
+                                        "usuario1": {
+                                            "id": usuarios[i].id,
+                                            "nombre": usuarios[i].nombre
+                                        },
+                                        "usuario2": {
+                                            "id": usuarios[j].id,
+                                            "nombre": usuarios[j].nombre
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
                 }
-                for (const match of matches) {
+                // Agregar los nuevos matches a la base de datos
+                for (const match of newMatches) {
                     try {
                         await db.collection("matches").add(match);
                     } catch (error) {
                         console.error("Error al agregar el documento a Firestore:", error);
                     }
                 }
-                res.status(200).send(matches)
+                res.status(200).send(newMatches)
             } catch (error) {
                 console.error(error);
                 res.status(500).send({ "message": "Error interno del servidor" });
@@ -374,6 +391,7 @@ app.get('/compatibles', async (req, res) => {
         res.status(500).send({ "message": "Error interno del servidor" });
     }
 })
+
 
 
 app.get('/compatibless', async (req, res) => {
