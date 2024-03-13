@@ -5,7 +5,28 @@ const port = 3000
 const { db } = require('./firebase.js')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const cors = require('cors')
+const cors = require('cors');
+const http = require('http');
+const firebaseAdmin = require('firebase-admin');
+/* const { Server } = require("socket.io");
+const http = require('http');
+
+const server = http.createServer(app); */
+//const io = new Server(server);
+
+/* const io = require('socket.io')(http, {
+  cors: {
+    origins: ['*']
+  }
+}); */
+
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = require('socket.io')(server, {
+    cors: {
+        origin: '*',
+    }
+});
 
 app.use(express.json())
 app.use((req, res, next) => {
@@ -592,4 +613,125 @@ app.get('/matches/:id', async (req, res) => {
     }
 }) */
 
-app.listen(port, () => console.log(`Server has started on port: ${port}`))
+// Evento de conexión de Socket.IO
+io.on('connection', (socket) => {
+    console.log('Usuario conectado');
+
+    // Manejar evento 'sendMessage' cuando el cliente envía un mensaje
+    socket.on('sendMessage', async (data) => {
+        console.log('Nuevo mensaje recibido:', data);
+        const sender = data.senderId
+        const recipient = data.receiverId
+        const text = data.message
+        // Guardar el mensaje en Firestore
+        try {
+            // Realizar dos consultas para verificar si hay una conversación entre los usuarios
+            const query1 = await db.collection('conversations')
+                .where('participants', '==', [sender, recipient])
+                .get();
+
+            const query2 = await db.collection('conversations')
+                .where('participants', '==', [recipient, sender])
+                .get();
+
+            let conversationId = null;
+
+            // Verificar si alguna de las consultas devolvió una conversación existente
+            if (!query1.empty) {
+                conversationId = query1.docs[0].id;
+            } else if (!query2.empty) {
+                conversationId = query2.docs[0].id;
+            } else {
+                // Si no existe una conversación, crear una nueva
+                const newConversationRef = await db.collection('conversations').add({
+                    participants: [sender, recipient]
+                });
+                conversationId = newConversationRef.id;
+            }
+
+            // Agregar el mensaje a la subcolección de mensajes
+            await db.collection('conversations').doc(conversationId).collection('messages').add({
+                sender,
+                text,
+                timestamp: firebaseAdmin.firestore.FieldValue.serverTimestamp()
+            });
+            io.to(data.receiverId).emit('newMessage', data);
+        } catch (error) {
+            console.error('Error al guardar el mensaje en Firestore:', error);
+        }
+        /* try {
+            await db.collection('chats').doc(`${data.senderId}-${data.receiverId}`).collection('messages').add({
+                senderId: data.senderId,
+                receiverId: data.receiverId,
+                message: data.message,
+                timestamp: new Date().getTime()
+            });
+            // Emitir el mensaje solo al usuario receptor
+            io.to(data.receiverId).emit('newMessage', data);
+        } catch (error) {
+            console.error('Error al guardar el mensaje en Firestore:', error);
+        } */
+    });
+
+    // Manejar evento 'loadConversation' cuando el cliente solicita cargar una conversación
+    socket.on('loadConversation', async (data) => {
+        const sender = data.senderId;
+        const recipient = data.receiverId;
+
+        try {
+            // Realizar dos consultas para verificar si hay una conversación entre los usuarios
+            const query1 = await db.collection('conversations')
+                .where('participants', '==', [sender, recipient])
+                .get();
+
+            const query2 = await db.collection('conversations')
+                .where('participants', '==', [recipient, sender])
+                .get();
+
+            let conversationId = null;
+
+            // Verificar si alguna de las consultas devolvió una conversación existente
+            if (!query1.empty) {
+                conversationId = query1.docs[0].id;
+            } else if (!query2.empty) {
+                conversationId = query2.docs[0].id;
+            }
+
+            // Si se encontró una conversación, cargar todos los mensajes asociados
+            if (conversationId) {
+                const messagesQuery = await db.collection('conversations').doc(conversationId)
+                    .collection('messages')
+                    .orderBy('timestamp', 'asc')
+                    .get();
+
+                const messages = [];
+                messagesQuery.forEach(doc => {
+                    messages.push({
+                        id: doc.id,
+                        sender: doc.data().sender,
+                        text: doc.data().text,
+                        timestamp: doc.data().timestamp
+                    });
+                });
+
+                // Emitir los mensajes al cliente que solicitó cargar la conversación
+                socket.emit('conversationLoaded', { messages });
+            }
+        } catch (error) {
+            console.error('Error al cargar la conversación desde Firestore:', error);
+        }
+    });
+
+    // Evento de desconexión de Socket.IO
+    socket.on('disconnect', () => {
+        console.log('Usuario desconectado');
+    });
+});
+
+
+server.listen(3000, () => {
+    console.log('listening on *:3000');
+});
+
+/* server.listen(3001, () => console.log(`listening on port 3001`)); */
+/* app.listen(port, () => console.log(`Server has started on port: ${port}`)) */
