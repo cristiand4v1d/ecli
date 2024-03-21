@@ -612,11 +612,14 @@ app.get('/matches/:id', async (req, res) => {
         console.error(error);
     }
 }) */
-
+var users = [];
 // Evento de conexión de Socket.IO
 io.on('connection', (socket) => {
-    console.log('Usuario conectado');
-
+    console.log('Usuario conectado', socket.id);
+    socket.on("connected", function (userId) {
+        users[userId] = socket.id;
+    });
+    
     // Manejar evento 'sendMessage' cuando el cliente envía un mensaje
     socket.on('sendMessage', async (data) => {
         console.log('Nuevo mensaje recibido:', data);
@@ -655,7 +658,10 @@ io.on('connection', (socket) => {
                 text,
                 timestamp: firebaseAdmin.firestore.FieldValue.serverTimestamp()
             });
-            io.to(data.receiverId).emit('newMessage', data);
+            io.to(users[recipient]).emit("newMessage", text);
+            console.log(users)
+           /*  io.to(data.receiverId).emit('newMessage', data);
+            io.emit("newMessage", data); */
         } catch (error) {
             console.error('Error al guardar el mensaje en Firestore:', error);
         }
@@ -729,8 +735,8 @@ io.on('connection', (socket) => {
 });
 
 
-server.listen(3000, () => {
-    console.log('listening on *:3000');
+server.listen(port, () => {
+    console.log(`listening on *:${port}`);
 });
 
 /* server.listen(3001, () => console.log(`listening on port 3001`)); */
