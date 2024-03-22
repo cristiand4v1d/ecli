@@ -686,8 +686,8 @@ io.on('connection', (socket) => {
             ) */
 
             if (user) {
-                console.log("llegó", user.socketId)
-                io.to(user.socketId).emit("newMessage", text);
+                console.log("llegó", io.to(user.socketId).emit("newMessage", text))
+                //io.to(user.socketId).emit("newMessage", text);
             }
             console.log(user)
             /*  io.to(data.receiverId).emit('newMessage', data);
