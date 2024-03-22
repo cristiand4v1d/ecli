@@ -28,7 +28,6 @@ const io = require('socket.io')(server, {
     }
 });
 
-let users = [];
 
 
 app.use(express.json())
@@ -618,13 +617,22 @@ app.get('/matches/:id', async (req, res) => {
 // Evento de conexión de Socket.IO
 io.on('connection', (socket) => {
     console.log('Usuario conectado', socket.id);
-    socket.on("connected", (userId) => {
+    socket.on("connected", async (userId) => {
+        let users = [];
+        try {
+            await db.collection('usuarios').doc(userId).update({
+                socketId:  socket.id // Aquí se utiliza socketId
+            });
+            
+        } catch (error) {
+            console.error('Error al guardar usuario en Firestore:', error);
+        }
         !users.some((user) => user?.userId == userId) && users.push({
             userId,
             socketId: socket.id,
         })
         //users[userId] = socket.id;
-        console.log(users)
+      
     });
 
     // Manejar evento 'sendMessage' cuando el cliente envía un mensaje
@@ -633,6 +641,14 @@ io.on('connection', (socket) => {
         const sender = data.senderId
         const recipient = data.receiverId
         const text = data.message
+
+        let user ;
+        try {
+            const doc = await db.collection('usuarios').doc(recipient).get();
+            user = doc.data()
+        } catch (error) {
+            console.error('Error:', error);
+        }
         // Guardar el mensaje en Firestore
         try {
             // Realizar dos consultas para verificar si hay una conversación entre los usuarios
@@ -665,15 +681,15 @@ io.on('connection', (socket) => {
                 text,
                 timestamp: firebaseAdmin.firestore.FieldValue.serverTimestamp()
             });
-            const user = users.find(
+           /*  const user = users.find(
                 (user) => user.userId == recipient
-            )
+            ) */
 
             if (user) {
-                console.log("llegó", user, user.socketId)
+               
                 io.to(user.socketId).emit("newMessage", text);
             }
-            console.log(users)
+            
             /*  io.to(data.receiverId).emit('newMessage', data);
              io.emit("newMessage", data); */
         } catch (error) {
@@ -744,7 +760,7 @@ io.on('connection', (socket) => {
 
     // Evento de desconexión de Socket.IO
     socket.on('disconnect', () => {
-        users = users.filter(user => user.socketId != socket.id)
+
         console.log('Usuario desconectado');
     });
 });
