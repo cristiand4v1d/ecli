@@ -623,7 +623,7 @@ io.on('connection', (socket) => {
             await db.collection('usuarios').doc(userId).update({
                 socketId:  socket.id // Aquí se utiliza socketId
             });
-            
+            console.log('Usuario guardado en Firestore');
         } catch (error) {
             console.error('Error al guardar usuario en Firestore:', error);
         }
@@ -632,7 +632,7 @@ io.on('connection', (socket) => {
             socketId: socket.id,
         })
         //users[userId] = socket.id;
-      
+        console.log(users)
     });
 
     // Manejar evento 'sendMessage' cuando el cliente envía un mensaje
@@ -686,10 +686,10 @@ io.on('connection', (socket) => {
             ) */
 
             if (user) {
-               
+                console.log("llegó", user.socketId)
                 io.to(user.socketId).emit("newMessage", text);
             }
-            
+            console.log(user)
             /*  io.to(data.receiverId).emit('newMessage', data);
              io.emit("newMessage", data); */
         } catch (error) {
@@ -760,7 +760,9 @@ io.on('connection', (socket) => {
 
     // Evento de desconexión de Socket.IO
     socket.on('disconnect', () => {
+        let users = [];
 
+        users = users.filter(user => user.socketId != socket.id)
         console.log('Usuario desconectado');
     });
 });
