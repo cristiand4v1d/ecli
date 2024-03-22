@@ -28,6 +28,9 @@ const io = require('socket.io')(server, {
     }
 });
 
+let users = [];
+
+
 app.use(express.json())
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:your_port'); // Reemplaza con tu puerto
@@ -612,14 +615,18 @@ app.get('/matches/:id', async (req, res) => {
         console.error(error);
     }
 }) */
-var users = [];
 // Evento de conexión de Socket.IO
 io.on('connection', (socket) => {
     console.log('Usuario conectado', socket.id);
-    socket.on("connected", function (userId) {
-        users[userId] = socket.id;
+    socket.on("connected", (userId) => {
+        !users.some((user) => user?.userId == userId) && users.push({
+            userId,
+            socketId: socket.id,
+        })
+        //users[userId] = socket.id;
+        console.log(users)
     });
-    
+
     // Manejar evento 'sendMessage' cuando el cliente envía un mensaje
     socket.on('sendMessage', async (data) => {
         console.log('Nuevo mensaje recibido:', data);
@@ -658,10 +665,17 @@ io.on('connection', (socket) => {
                 text,
                 timestamp: firebaseAdmin.firestore.FieldValue.serverTimestamp()
             });
-            io.to(users[recipient]).emit("newMessage", text);
+            const user = users.find(
+                (user) => user.userId == recipient
+            )
+
+            if (user) {
+                console.log("llegó", user, user.socketId)
+                io.to(user.socketId).emit("newMessage", text);
+            }
             console.log(users)
-           /*  io.to(data.receiverId).emit('newMessage', data);
-            io.emit("newMessage", data); */
+            /*  io.to(data.receiverId).emit('newMessage', data);
+             io.emit("newMessage", data); */
         } catch (error) {
             console.error('Error al guardar el mensaje en Firestore:', error);
         }
@@ -730,6 +744,7 @@ io.on('connection', (socket) => {
 
     // Evento de desconexión de Socket.IO
     socket.on('disconnect', () => {
+        users = users.filter(user => user.socketId != socket.id)
         console.log('Usuario desconectado');
     });
 });
